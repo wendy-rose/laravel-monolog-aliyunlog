@@ -1,6 +1,6 @@
 {
     "name": "wendy/monolog-aliyunlog",
-    "description": "Laravel 5.6+ aliyunlog driver for Monolog",
+    "description": "Laravel 5.5+ aliyunlog driver for Monolog",
     "keywords": [
         "laravel",
         "monolog",
