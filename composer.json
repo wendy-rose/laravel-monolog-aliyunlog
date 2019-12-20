@@ -1,0 +1,22 @@
+{
+    "name": "wendy/monolog-aliyunlog",
+    "description": "Laravel 5.6+ aliyunlog driver for Monolog",
+    "keywords": ["laravel5.6+",  "log", "monolog", "aliyunlog"],
+    "homepage": "https://github.com/wendy-rose/laravel-monolog-aliyunlog.git",
+    "type": "library",
+    "license": "MIT",
+    "authors": [{
+        "name": "wendy",
+        "email": "wendylin6970@gmail.com"
+    }],
+    "require": {
+        "php": ">=7.0.0",
+        "lokielse/aliyun-open-api-sls": "^1.0.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Logger": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
