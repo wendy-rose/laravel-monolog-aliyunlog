@@ -26,11 +26,11 @@ class AliyunLogHandler extends AbstractProcessingHandler
 
     public function __construct($level = Logger::DEBUG, $bubble = true)
     {
-        $this->accessKeyId = config('access_key_id');
-        $this->accessKeySecret = config('access_key_secret');
-        $this->endpoint = config('sls_endpoint');
-        $this->project = config('SLS_PROJECT');
-        $this->logStore = config('SLS_STORE');
+        $this->accessKeyId = config('aliyunlog.access_key_id');
+        $this->accessKeySecret = config('aliyunlog.access_key_secret');
+        $this->endpoint = config('aliyunlog.sls_endpoint');
+        $this->project = config('aliyunlog.sls_project');
+        $this->logStore = config('aliyunlog.sls_store');
         parent::__construct($level, $bubble);
     }
 
@@ -39,7 +39,7 @@ class AliyunLogHandler extends AbstractProcessingHandler
      * @param array $record
      * @throws \Aliyun\SLS\Exception
      */
-    protected function write(array $record)
+    protected function write(array $record):void
     {
         //这里如果是error错误，阿里云日志的topic统一是error，其他都是自定义（即调用laravel自带的Log工具类时给的标识）
         if ($record['level'] == Logger::ERROR) {
