@@ -27,6 +27,9 @@ class MonologAliyunHandlerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->publishes([
+            __DIR__. '/../config/aliyunlog.php' => config_path('aliyunlog.php'),
+        ]);
     }
 
     /**
