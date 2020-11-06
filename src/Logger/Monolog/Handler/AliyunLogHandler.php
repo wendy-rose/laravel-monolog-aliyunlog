@@ -26,11 +26,11 @@ class AliyunLogHandler extends AbstractProcessingHandler
 
     public function __construct($level = Logger::DEBUG, $bubble = true)
     {
-        $this->accessKeyId = env('ALIYUN_ACCESS_KEY_ID');
-        $this->accessKeySecret = env('ALIYUN_ACCESS_KEY_SECRET');
-        $this->endpoint = env('SLS_ENDPOINT');
-        $this->project = env('SLS_PROJECT');
-        $this->logStore = env('SLS_STORE');
+        $this->accessKeyId = config('access_key_id');
+        $this->accessKeySecret = config('access_key_secret');
+        $this->endpoint = config('sls_endpoint');
+        $this->project = config('SLS_PROJECT');
+        $this->logStore = config('SLS_STORE');
         parent::__construct($level, $bubble);
     }
 
