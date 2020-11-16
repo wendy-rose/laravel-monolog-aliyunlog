@@ -24,7 +24,7 @@ class AliyunLogger
      */
     public function __invoke(array $config)
     {
-        $channel = $config['name'] ?? env('APP_ENV');
+        $channel = $config['name'] ?? config('app.name');
         $monolog = new Logger($channel);
         $monolog->pushHandler(new AliyunLogHandler());
         return $monolog;
