@@ -57,7 +57,7 @@ class AliyunLogHandler extends AbstractProcessingHandler
             'context' => json_encode($record, JSON_UNESCAPED_UNICODE),
             'ip' => request()->getClientIp(),
             'header' => $this->getHeader(),
-            'contentType' => request()->getContentType(),
+            'contentType' => request()->getContentType() ?? '',
         ];
         $logs = [new LogItem($data)];
         $client = new Client($this->endpoint, $this->accessKeyId, $this->accessKeySecret);
