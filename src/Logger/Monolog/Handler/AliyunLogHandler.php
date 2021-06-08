@@ -50,12 +50,14 @@ class AliyunLogHandler extends AbstractProcessingHandler
         $data = [
             'level' => $record['level_name'],
             'method' => request()->getMethod(),
-            'requestUri' => request()->getRequestUri(),
+            'requestUri' => request()->getPathInfo(),
             'requestData' => $this->getRequestData(),
             'time' => date('Y-m-d H:i:s', time()),
             'topic' => $topic,
             'context' => json_encode($record, JSON_UNESCAPED_UNICODE),
-            'ip' => request()->getClientIp()
+            'ip' => request()->getClientIp(),
+            'header' => request()->header(),
+            'contentType' => request()->getContentType(),
         ];
         $logs = [new LogItem($data)];
         $client = new Client($this->endpoint, $this->accessKeyId, $this->accessKeySecret);
@@ -69,14 +71,24 @@ class AliyunLogHandler extends AbstractProcessingHandler
      */
     protected function getRequestData()
     {
-        $requestJsonData = empty(request()->getContent()) ? [] : json_decode(request()->getContent(), true);
-        $postData = empty(request()->post()) ? [] : request()->post();
-        $data = [
-            '__get__' => empty(request()->query()) ? [] : request()->query(),
-            '__post__' => array_merge($postData , $requestJsonData),
-            '__put__' => $requestJsonData,
-            '__delete' => $requestJsonData
-        ];
+        $data = ['__get__' => [], '__post__' => [], '__put__' => [], '__delete__' => []];
+        $query = request()->query() ?? [];
+        $data['__get__'] = array_splice($query,1);
+        if (!request()->isMethod('GET')) {
+            if (request()->isJson()) {
+                $body = request()->getContent() ? json_decode(request()->getContent(), true): [];
+            } else {
+                $body = request()->post();
+            }
+            if (request()->isMethod('POST')) {
+                $data['__post__'] = $body;
+            } elseif (request()->isMethod('PUT')) {
+                $data['__put__'] = $body;
+            } elseif (request()->isMethod('DELETE')) {
+                $data['__delete__'] = $body;
+            }
+        }
         return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
+
 }
