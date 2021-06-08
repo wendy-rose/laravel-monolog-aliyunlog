@@ -56,13 +56,23 @@ class AliyunLogHandler extends AbstractProcessingHandler
             'topic' => $topic,
             'context' => json_encode($record, JSON_UNESCAPED_UNICODE),
             'ip' => request()->getClientIp(),
-            'header' => request()->header(),
+            'header' => $this->getHeader(),
             'contentType' => request()->getContentType(),
         ];
         $logs = [new LogItem($data)];
         $client = new Client($this->endpoint, $this->accessKeyId, $this->accessKeySecret);
         $putLogsRequest = new PutLogsRequest($this->project, $this->logStore, $topic, $data['ip'], $logs);
         $client->putLogs($putLogsRequest);
+    }
+
+    /**
+     * 获取头部
+     * @return false|string
+     */
+    protected function getHeader()
+    {
+        $header = request()->header() ?? [];
+        return json_encode($header, JSON_UNESCAPED_UNICODE);
     }
 
     /**
