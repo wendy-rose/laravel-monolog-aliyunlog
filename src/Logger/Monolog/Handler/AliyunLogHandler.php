@@ -82,8 +82,7 @@ class AliyunLogHandler extends AbstractProcessingHandler
     protected function getRequestData()
     {
         $data = ['__get__' => [], '__post__' => [], '__put__' => [], '__delete__' => []];
-        $query = request()->query() ?? [];
-        $data['__get__'] = array_splice($query,1);
+        $data['__get__'] = request()->query() ?? [];
         if (!request()->isMethod('GET')) {
             if (request()->isJson()) {
                 $body = request()->getContent() ? json_decode(request()->getContent(), true): [];
