@@ -41,28 +41,32 @@ class AliyunLogHandler extends AbstractProcessingHandler
      */
     protected function write(array $record):void
     {
-        //这里如果是error错误，阿里云日志的topic统一是error，其他都是自定义（即调用laravel自带的Log工具类时给的标识）
-        if ($record['level'] == Logger::ERROR) {
-            $topic = strtolower($record['level_name']);
-        } else {
-            $topic = $record['message'];
+        try {
+            //这里如果是error错误，阿里云日志的topic统一是error，其他都是自定义（即调用laravel自带的Log工具类时给的标识）
+            if ($record['level'] == Logger::ERROR) {
+                $topic = strtolower($record['level_name']);
+            } else {
+                $topic = $record['message'];
+            }
+            $data = [
+                'level' => $record['level_name'],
+                'method' => request()->getMethod(),
+                'requestUri' => request()->getPathInfo(),
+                'requestData' => $this->getRequestData(),
+                'time' => date('Y-m-d H:i:s', time()),
+                'topic' => $topic,
+                'context' => json_encode($record, JSON_UNESCAPED_UNICODE),
+                'ip' => request()->getClientIp(),
+                'header' => $this->getHeader(),
+                'contentType' => request()->getContentType() ?? '',
+            ];
+            $logs = [new LogItem($data)];
+            $client = new Client($this->endpoint, $this->accessKeyId, $this->accessKeySecret);
+            $putLogsRequest = new PutLogsRequest($this->project, $this->logStore, $topic, $data['ip'], $logs);
+            $client->putLogs($putLogsRequest);
+        } catch (\Exception $exception) {
+
         }
-        $data = [
-            'level' => $record['level_name'],
-            'method' => request()->getMethod(),
-            'requestUri' => request()->getPathInfo(),
-            'requestData' => $this->getRequestData(),
-            'time' => date('Y-m-d H:i:s', time()),
-            'topic' => $topic,
-            'context' => json_encode($record, JSON_UNESCAPED_UNICODE),
-            'ip' => request()->getClientIp(),
-            'header' => $this->getHeader(),
-            'contentType' => request()->getContentType() ?? '',
-        ];
-        $logs = [new LogItem($data)];
-        $client = new Client($this->endpoint, $this->accessKeyId, $this->accessKeySecret);
-        $putLogsRequest = new PutLogsRequest($this->project, $this->logStore, $topic, $data['ip'], $logs);
-        $client->putLogs($putLogsRequest);
     }
 
     /**
